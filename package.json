@@ -6,22 +6,44 @@
     "dev": "next dev --turbopack",
     "build": "next build --turbopack",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "next lint",
+    "db:push": "drizzle-kit push:pg",
+    "db:studio": "drizzle-kit studio",
+    "worker": "tsx src/server/jobs/worker.ts"
   },
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.893.0",
+    "@aws-sdk/s3-request-presigner": "^3.893.0",
+    "jimp": "^0.22.12",
+    "@types/multer": "^2.0.0",
+    "@uploadthing/react": "^7.3.3",
+    "dotenv": "^17.2.2",
+    "drizzle-kit": "^0.31.4",
+    "drizzle-orm": "^0.44.5",
+    "heic-convert": "^2.1.0",
+    "lucide-react": "^0.544.0",
+    "multer": "^2.0.2",
+    "nanoid": "^5.1.5",
+    "next": "15.5.3",
+    "node-fetch": "^3.3.2",
+    "pg": "^8.16.3",
     "react": "19.1.0",
     "react-dom": "19.1.0",
-    "next": "15.5.3"
+    "sharp": "^0.34.4",
+    "tsx": "^4.20.5",
+    "uploadthing": "^7.7.4"
   },
   "devDependencies": {
-    "typescript": "^5",
+    "@eslint/eslintrc": "^3",
+    "@tailwindcss/postcss": "^4",
+    "@types/heic-convert": "^2.1.0",
     "@types/node": "^20",
+    "@types/pg": "^8.15.5",
     "@types/react": "^19",
     "@types/react-dom": "^19",
-    "@tailwindcss/postcss": "^4",
-    "tailwindcss": "^4",
     "eslint": "^9",
     "eslint-config-next": "15.5.3",
-    "@eslint/eslintrc": "^3"
+    "tailwindcss": "^4",
+    "typescript": "^5"
   }
 }
