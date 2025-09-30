@@ -3,7 +3,7 @@ import { db } from "@/src/server/db";
 import { images } from "@/src/server/db/schema";
 import { and, eq, sql } from "drizzle-orm";
 import { hamming } from "../services/images";
-import { blurValidator, faceDetectionValidator } from "../validators";
+import { blurValidator, rekognitionFacesValidator } from "../validators";
 
 export type ValidationContext = {
   original: Buffer;
@@ -97,7 +97,7 @@ export const duplicateValidator: Validator = async (ctx) => {
   if (existingExactDuplicate) {
     results.push({
       code: "DUPLICATE",
-      message: "An exact duplicate of this image already exists in this submission.",
+      message: "Duplicate Image.",
     });
     return results;
   }
@@ -133,7 +133,7 @@ export function getAllValidators(): Validator[] {
     formatValidator,
     sizeAndResolutionValidator,
     duplicateValidator,
+    rekognitionFacesValidator,
     blurValidator,
-    // faceDetectionValidator,
   ];
 }

@@ -89,7 +89,7 @@ export const faceDetectionValidator: Validator = async (ctx) => {
     if (facePercentage < MIN_FACE_PERCENTAGE) {
       results.push({
         code: "FACE_TOO_SMALL",
-        message: `Detected face is too small (${facePercentage.toFixed(2)}% of image, minimum: ${MIN_FACE_PERCENTAGE}%)`,
+        message: `Detected face is too small`,
         details: {
           facePercentage,
           minRequired: MIN_FACE_PERCENTAGE,

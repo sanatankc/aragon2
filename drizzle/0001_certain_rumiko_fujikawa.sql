@@ -1,0 +1,1 @@
+ALTER TABLE "images" ADD COLUMN "extra_data" jsonb;

@@ -50,7 +50,7 @@ export const blurValidator: Validator = async (ctx) => {
     if (variance < BLUR_THRESHOLD) {
       results.push({
         code: "BLURRY",
-        message: `Image appears to be blurry (Laplacian variance: ${variance.toFixed(2)}, threshold: ${BLUR_THRESHOLD})`,
+        message: `Image appears to be blurry`,
         details: { 
           laplacianVariance: variance,
           threshold: BLUR_THRESHOLD,

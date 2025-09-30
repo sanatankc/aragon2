@@ -1,6 +1,6 @@
 import 'dotenv/config';
 import { db } from "@/src/server/db";
-import { jobs, images } from "@/src/server/db/schema";
+import { jobs, images, validationResults } from "@/src/server/db/schema";
 import { eq } from "drizzle-orm";
 import { downloadImage, generateThumbnail, sha256, getImageMetadata, dhashHex } from "@/src/server/services/images";
 import { runPipeline, getAllValidators, ValidationContext, ValidationResult } from "@/src/server/services/validate";
@@ -59,6 +59,16 @@ async function processJob() {
     const allValidationResults = await runPipeline(validationContext, allValidators);
 
     if (allValidationResults.length > 0) {
+      // Persist detailed validation results
+      for (const vr of allValidationResults) {
+        await db.insert(validationResults).values({
+          id: crypto.randomUUID().replace(/-/g, '').slice(0, 24),
+          imageId: job.imageId,
+          code: vr.code,
+          message: vr.message,
+          details: vr.details as any,
+        });
+      }
       await db
         .update(images)
         .set({

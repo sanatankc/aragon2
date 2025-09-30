@@ -28,6 +28,7 @@ function Home() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [uploadingFiles, setUploadingFiles] = useState<UploadedFile[]>([]);
+  const [isValidating, setIsValidating] = useState(false);
   const [acceptedFiles, setAcceptedFiles] = useState<UploadedFile[]>([]);
   const [rejectedFiles, setRejectedFiles] = useState<RejectedFile[]>([]);
   const [submissionId, setSubmissionId] = useState<string | null>(null);
@@ -105,9 +106,18 @@ function Home() {
           }
         });
 
-        setAcceptedFiles(newAccepted);
-        setRejectedFiles(newRejected);
-        setUploadingFiles(newUploading);
+        if (newUploading.length === 0) {
+          setIsValidating(false);
+          setAcceptedFiles(newAccepted);
+          setRejectedFiles(newRejected);
+          setUploadingFiles([]);
+        } else {
+          const sortedData = data.items
+            .toSorted((a: any, b: any) => a.createdAt - b.createdAt)
+          setUploadingFiles(
+            sortedData.map((img: any) => ({ name: img.id, size: img.sizeBytes, url: img.thumbUrl || img.originalUrl }))
+          );
+        }
       } catch (error) {
         console.error("Error fetching images:", error);
       }
@@ -121,9 +131,10 @@ function Home() {
 
   const handleUploadComplete = (res: any) => {
     if (res) {
-      setUploadingFiles(prevFiles => prevFiles.filter(f => !res.find((r: any) => r.name === f.name)));
-      setAcceptedFiles(prevFiles => [...prevFiles, ...res]);
-      addToast("Your photos have been successfully uploaded!", "success");
+      // setUploadingFiles(prevFiles => prevFiles.filter(f => !res.find((r: any) => r.name === f.name)));
+      // setAcceptedFiles(prevFiles => [...prevFiles, ...res]);
+      setIsValidating(true);
+      // Defer toast until validations complete (handled in polling)
     }
     console.log("Files: ", res);
   };
@@ -133,8 +144,9 @@ function Home() {
     addToast(`Upload failed: ${error.message}`, "error");
   };
 
-  const handleUploadBegin = (name: string) => {
-    setUploadingFiles(prevFiles => [...prevFiles, { name, size: 0, url: '' }]);
+  const handleUploadBegin = (file: { name: string; previewUrl: string }) => {
+    // setUploadingFiles(prevFiles => [...prevFiles, { name: file.name, size: 0, url: file.previewUrl }]);
+    // setIsValidating(true);
   };
 
   const handleDeleteImage = (file: UploadedFile) => {
@@ -145,9 +157,19 @@ function Home() {
   const totalUploaded = acceptedFiles.length + rejectedFiles.length;
   const progressPercentage = Math.min((totalUploaded / 10) * 100, 100);
 
+  // Fire success toast once validation transitions to none pending and there are accepted files
+  useEffect(() => {
+    if (!isValidating && submissionId) {
+      addToast("Your photos have been successfully uploaded!", "success");
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isValidating]);
+
+  console.log("uploadingFiles", uploadingFiles);
+
   return (
     <div className="min-h-screen bg-white">
-      <Header progress={progressPercentage} />
+      <Header progress={progressPercentage} totalUploaded={totalUploaded} />
       
       <div className="flex h-[calc(100vh-80px)]">
         <UploadPanel

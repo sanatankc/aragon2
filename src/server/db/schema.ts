@@ -21,6 +21,7 @@ export const images = pgTable("images", {
     .notNull()
     .references(() => submissions.id, { onDelete: "cascade" }),
   status: imageStatus("status").notNull().default("pending_upload"),
+  extraData: jsonb("extra_data"),
   originalUrl: text("original_url").notNull(),
   processedUrl: text("processed_url"),
   thumbUrl: text("thumb_url"),
